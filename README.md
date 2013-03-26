@@ -22,7 +22,7 @@ $labelEvent = Event::labelEvent(array(
 // Create some custom event:
 $fooEvent = Event::customEvent('foo', array(
     '$user_id' => '1234',
-    'some_key => 'some_value',
+    'some_key' => 'some_value',
     // ...
 ));
 ```
