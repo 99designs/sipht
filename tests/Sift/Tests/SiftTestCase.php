@@ -4,10 +4,10 @@ namespace Sift\Tests;
 
 class SiftTestCase extends \PHPUnit_Framework_TestCase
 {
-	public function tearDown()
-	{
-		\Mockery::close();
-	}
+    public function tearDown()
+    {
+        \Mockery::close();
+    }
 
     /**
      * Test that two associative arrays are equal without respect to ordering

@@ -4,29 +4,29 @@ namespace Sift\Tests;
 
 class EventTest extends SiftTestCase
 {
-	public function testCreateTransactionEvent()
-	{
-		$this->assertEqualAssociativeArrays(
-			array('$type' => '$transaction', 'foo' => 'bar'),
-			\Sift\Event::transactionEvent(array('foo' => 'bar'))
-		);
-	}
+    public function testCreateTransactionEvent()
+    {
+        $this->assertEqualAssociativeArrays(
+            array('$type' => '$transaction', 'foo' => 'bar'),
+            \Sift\Event::transactionEvent(array('foo' => 'bar'))
+        );
+    }
 
-	public function testCreateLabelEvent()
-	{
-		$this->assertEqualAssociativeArrays(
-			array('$type' => '$label', 'foo' => 'bar'),
-			\Sift\Event::labelEvent(array('foo' => 'bar'))
-		);
-	}
+    public function testCreateLabelEvent()
+    {
+        $this->assertEqualAssociativeArrays(
+            array('$type' => '$label', 'foo' => 'bar'),
+            \Sift\Event::labelEvent(array('foo' => 'bar'))
+        );
+    }
 
-	public function testCreateCustomEvent()
-	{
-		$this->assertEqualAssociativeArrays(
-			array('$type' => 'some_event', 'foo' => 'bar'),
-			\Sift\Event::customEvent('some_event', array('foo' => 'bar'))
-		);
-	}
+    public function testCreateCustomEvent()
+    {
+        $this->assertEqualAssociativeArrays(
+            array('$type' => 'some_event', 'foo' => 'bar'),
+            \Sift\Event::customEvent('some_event', array('foo' => 'bar'))
+        );
+    }
 
     public function testWithApiKey()
     {
