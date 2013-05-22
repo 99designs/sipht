@@ -40,9 +40,13 @@ class Client
     public function postEvent($event)
     {
         $json = $event->withKey($this->apiKey)->toJson();
-        return $this->http
-            ->post('/v202/events', null, $json)
-            ->send()
-            ->json();
+        try {
+            return $this->http
+                ->post('/v202/events', null, $json)
+                ->send()
+                ->json();
+        } catch (\Guzzle\Http\Exception\HttpException $ex) {
+            throw Exception\HttpException::fromGuzzleException($ex);
+        }
     }
 }

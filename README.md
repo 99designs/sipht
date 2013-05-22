@@ -37,8 +37,15 @@ $client = new Client($apiKey);
 $response = $client->postEvent($event);
 ```
 
-[Guzzle][2] is used under the hood. If you need to handle errors, catch
-`GuzzleException` and friends.
+The following errors could be thrown by a client request:
+
+ * `Sift\Exception\BadRequestException`: HTTP 40x; the request was rejected by
+    the API
+
+ * `Sift\Exception\ServerErrorException`: HTTP 50x; the API endpoint suffered
+    some internal problem
+
+ * `Sift\Exception\HttpException`: any other exception generated in the course
+    of making the HTTP request (e.g. too many redirects)
 
  [1]: https://siftscience.com/docs/rest-api
- [2]: http://guzzlephp.org/
