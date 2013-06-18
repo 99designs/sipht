@@ -10,35 +10,44 @@ class Event extends \ArrayObject
     /**
      * Create a transaction event using the given fields
      * @see https://siftscience.com/docs/rest-api#transactions
-     * @param array $fields event data
+     * @param string $userId unique user identifier
+     * @param array  $fields optional event data
      * @return Sift\Event
      */
-    public static function transactionEvent($fields)
+    public static function transactionEvent($userId, $fields=array())
     {
         $fields['$type'] = self::TYPE_TRANSACTION;
+        $fields['$user_id'] = $userId;
         return new self($fields);
     }
 
     /**
      * Create a label event using the given fields
      * @see https://siftscience.com/docs/rest-api#labels
-     * @param array $fields event data
+     * @param string $label  label to apply to user
+     * @param string $userId unique user identifier
+     * @param array  $fields optional event data
      * @return Sift\Event
      */
-    public static function labelEvent($fields)
+    public static function labelEvent($label, $userId, $fields=array())
     {
         $fields['$type'] = self::TYPE_LABEL;
+        $fields['$label'] = $label;
+        $fields['$user_id'] = $userId;
         return new self($fields);
     }
 
     /**
      * Create a custom event using the given fields
-     * @param array $fields event data
+     * @param string $type   event type
+     * @param string $userId unique user identifier
+     * @param array  $fields event data
      * @return Sift\Event
      */
-    public static function customEvent($type, $fields)
+    public static function customEvent($type, $userId, $fields=array())
     {
         $fields['$type'] = $type;
+        $fields['$user_id'] = $userId;
         return new self($fields);
     }
 
