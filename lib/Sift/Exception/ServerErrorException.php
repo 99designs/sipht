@@ -3,7 +3,7 @@
 namespace Sift\Exception;
 
 /**
- * Corresponds to an HTTP 500; generated if the Sift Science API is having
+ * Corresponds to an HTTP 50x; generated if the Sift Science API is having
  * problems.
  */
 class ServerErrorException extends HttpException

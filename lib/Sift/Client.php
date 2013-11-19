@@ -2,11 +2,19 @@
 
 namespace Sift;
 
+use Guzzle\Http\Client as HttpClient;
+use Guzzle\Http\Exception\HttpException as GuzzleHttpException;
+use Guzzle\Http\Message\Request;
+use Sift\Event;
+use Sift\Exception\HttpException as SiftHttpException;
+use Sift\Label;
+
 /**
  * A minimal wrapper around the Sift REST API.
  */
 class Client
 {
+    const API_VERSION = '203';
     const API_ENDPOINT = 'https://api.siftscience.com';
 
     private $apiKey;
@@ -17,7 +25,7 @@ class Client
      * @param string $apiKey Sift API key
      * @param object $http   something matching the Guzzle\Http\Client interface
      */
-    public function __construct($apiKey, $http=null)
+    public function __construct($apiKey, $http = null)
     {
         $this->apiKey = $apiKey;
         $this->http = $http ?: $this->defaultHttpClient();
@@ -29,24 +37,63 @@ class Client
      */
     public function defaultHttpClient()
     {
-        return new \Guzzle\Http\Client(self::API_ENDPOINT);
+        return new HttpClient(sprintf(
+            '%s/v%s',
+            self::API_ENDPOINT.
+            self::API_VERSION
+        ));
     }
 
     /**
      * Post an event to the REST API and return decoded JSON response.
+     *
+     * @see https://siftscience.com/docs/references/events-api
+     * @see Sift\Event
+     *
      * @param Sift\Event $event
      * @return array
      */
-    public function postEvent($event)
+    public function postEvent(Event $event)
     {
-        $json = $event->withKey($this->apiKey)->toJson();
+        $json = $event
+            ->withKey($this->apiKey)
+            ->toJson();
+
+        return $this->send(
+            $this->http->post('events', null, $json)
+        );
+    }
+
+    /**
+     * Label a given user and return decoded JSON response.
+     *
+     * @see https://siftscience.com/docs/references/labels-api
+     * @see Sift\Label
+     *
+     * @param string     $userId
+     * @param Sift\Label $label
+     * @return array
+     */
+    public function labelUser($userId, Label $label)
+    {
+        $json = $label
+            ->withKey($this->apiKey)
+            ->toJson();
+
+        return $this->send(
+            $this->http->post("users/$userId/labels", null, $json)
+        );
+    }
+    }
+
+    public function send(Request $request)
+    {
         try {
-            return $this->http
-                ->post('/v202/events', null, $json)
+            return $request
                 ->send()
                 ->json();
-        } catch (\Guzzle\Http\Exception\HttpException $ex) {
-            throw Exception\HttpException::fromGuzzleException($ex);
+        } catch (GuzzleHttpException $ex) {
+            throw SiftHttpException::fromGuzzleException($ex);
         }
     }
 }

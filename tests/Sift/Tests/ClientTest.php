@@ -2,59 +2,86 @@
 
 namespace Sift\Tests;
 
+use Guzzle\Http\Client as GuzzleClient;
+use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Mock\MockPlugin;
+use Sift\Client;
+use Sift\Event;
+use Sift\Label;
+
 class ClientTest extends SiftTestCase
 {
     const API_KEY = 'ABC123';
 
     public function setUp()
     {
-        $http = new \Guzzle\Http\Client('http://example.com');
-        $mock = new \Guzzle\Plugin\Mock\MockPlugin();
+        $http = new GuzzleClient('http://example.com/v203');
+        $mock = new MockPlugin();
         $http->addSubscriber($mock);
 
-        $this->client = new \Sift\Client(self::API_KEY, $http);
+        $this->client = new Client(self::API_KEY, $http);
+        $this->http = $http;
         $this->httpMock = $mock;
     }
 
     public function testPostEvent()
     {
-        $this->httpMock->addResponse(new \Guzzle\Http\Message\Response(200, null, json_encode(array(
-            'baz' => 'bla'
+        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+            'baz' => 'bla',
         ))));
-        $response = $this->client->postEvent(new \Sift\Event(array('foo' => 'bar')));
+        $response = $this->client->postEvent(new Event(array('foo' => 'bar')));
         $requests = $this->httpMock->getReceivedRequests();
 
         $this->assertEqualAssociativeArrays($response, array('baz' => 'bla'));
         $this->assertEquals(1, count($requests));
-        $this->assertEquals('http://example.com/v202/events', $requests[0]->getUrl());
+        $this->assertEquals('http://example.com/v203/events', $requests[0]->getUrl());
         $this->assertEqualAssociativeArrays(
             array('$api_key' => self::API_KEY, 'foo' => 'bar'),
             json_decode((string) $requests[0]->getBody())
         );
     }
 
-    public function testPostInvalidEvent()
+    public function testLabelUser()
     {
-        $this->httpMock->addResponse(new \Guzzle\Http\Message\Response(403, null, json_encode(array(
+        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+            'baz' => 'bla',
+        ))));
+        $response = $this->client->labelUser('1234', new Label(array('foo' => 'bar')));
+        $requests = $this->httpMock->getReceivedRequests();
+
+        $this->assertEqualAssociativeArrays($response, array('baz' => 'bla'));
+        $this->assertEquals(1, count($requests));
+        $this->assertEquals('http://example.com/v203/users/1234/labels', $requests[0]->getUrl());
+        $this->assertEqualAssociativeArrays(
+            array('$api_key' => self::API_KEY, 'foo' => 'bar'),
+            json_decode((string) $requests[0]->getBody())
+        );
+    }
+
+    public function testInvalidResponseRethrownAsBadRequestException()
+    {
+        $this->httpMock->addResponse(new Response(403, null, json_encode(array(
             'status' => 51,
             'error_message' => 'Invalid API key',
         ))));
 
-        $this->setExpectedException('\Sift\Exception\BadRequestException');
-        $this->client->postEvent(new \Sift\Event(array('foo' => 'bar')));
+        $this->setExpectedException('Sift\Exception\BadRequestException');
+        $this->client->send($this->http->post('foo/butts'));
     }
 
-    public function testPostEventCausingServerError()
+    public function testServerErrorRethrownAsServerErrorException()
     {
-        $this->httpMock->addResponse(new \Guzzle\Http\Message\Response(500));
-        $this->setExpectedException('\Sift\Exception\ServerErrorException');
-        $this->client->postEvent(new \Sift\Event(array('foo' => 'bar')));
+        $this->httpMock->addResponse(new Response(500));
+        $this->setExpectedException('Sift\Exception\ServerErrorException');
+        $this->client->send($this->http->post('foo/butts'));
     }
 
-    public function testPostEventWithTransportError()
+    public function testCurlExceptionRethrownAsHttpException()
     {
-        $this->httpMock->addException(new \Guzzle\Http\Exception\CurlException('derp'));
-        $this->setExpectedException('\Sift\Exception\HttpException');
-        $this->client->postEvent(new \Sift\Event(array('foo' => 'bar')));
+        $this->httpMock->addException(new CurlException('derp'));
+        $this->setExpectedException('Sift\Exception\HttpException');
+        $this->client->send($this->http->post('foo/butts'));
     }
 }
