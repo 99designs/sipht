@@ -1,5 +1,7 @@
 A PHP client for the [Sift Science][1] REST API.
 
+[![Build Status](https://travis-ci.org/99designs/sipht.png)](https://travis-ci.org/99designs/sipht)
+
 This client supports the three basic operations exposed by the Sift API: posting
 events, labelling users and fetching scores.
 
