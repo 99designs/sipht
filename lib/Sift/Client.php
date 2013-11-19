@@ -11,6 +11,11 @@ use Sift\Label;
 
 /**
  * A minimal wrapper around the Sift REST API.
+ *
+ * This class implements three API calls:
+ *  - submitting events (`postEvent()`)
+ *  - labelling users (`labelUser()`)
+ *  - fetching scores (`userScore()`)
  */
 class Client
 {
@@ -84,6 +89,28 @@ class Client
             $this->http->post("users/$userId/labels", null, $json)
         );
     }
+
+    /**
+     * Fetch user fraud score details
+     *
+     * @see https://siftscience.com/docs/getting-scores
+     *
+     * @param string $userId
+     * @return Sift\Score
+     */
+    public function userScore($userId)
+    {
+        $path = sprintf(
+            'score/%s/?%s',
+            $userId,
+            http_build_query(array('api_key' => $this->apiKey))
+        );
+
+        $scoreData = $this->send(
+            $this->http->get($path)
+        );
+
+        return Score::fromArray($scoreData);
     }
 
     public function send(Request $request)

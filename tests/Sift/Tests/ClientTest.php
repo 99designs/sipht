@@ -60,6 +60,47 @@ class ClientTest extends SiftTestCase
         );
     }
 
+    public function testUserScore()
+    {
+        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+            'user_id' => '123',
+            'score' => 0.93,
+            'reasons' => array(
+                array(
+                    'name' => 'UsersPerDevice',
+                    'value' => 4,
+                    'details' => array(
+                        'users' => 'a, b, c, d',
+                    ),
+                ),
+            ),
+        ))));
+
+        $score = $this->client->userScore('123');
+        $requests = $this->httpMock->getReceivedRequests();
+
+        $this->assertEquals(1, count($requests));
+        $this->assertEquals(
+            'http://example.com/v203/score/123/?api_key=' . self::API_KEY,
+            $requests[0]->getUrl()
+        );
+
+        $this->assertEquals('123', $score->userId);
+        $this->assertEquals(0.93, $score->score);
+        $this->assertEquals(
+            array(
+                array(
+                    'name' => 'UsersPerDevice',
+                    'value' => 4,
+                    'details' => array(
+                        'users' => 'a, b, c, d',
+                    ),
+                ),
+            ),
+            $score->reasons
+        );
+    }
+
     public function testInvalidResponseRethrownAsBadRequestException()
     {
         $this->httpMock->addResponse(new Response(403, null, json_encode(array(
