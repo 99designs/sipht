@@ -182,14 +182,26 @@ class Event extends Payload
     }
 
     /**
-     * Create an event using the given fields
+     * Create an event of a given type, using the given fields
+     *
      * @param string $type   event type
      * @param array  $fields event data
      * @return Sift\Event
      */
-    public static function factory($type, array $fields)
+    protected static function factory($type, array $fields)
     {
         $fields['$type'] = $type;
+        return self::construct($fields);
+    }
+
+    /**
+     * Create an event from an array of fields.
+     *
+     * @param array $fields event data
+     * @return Sift\Event
+     */
+    public static function construct(array $fields)
+    {
         return new self($fields);
     }
 }
