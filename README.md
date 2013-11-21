@@ -30,22 +30,19 @@ The following errors may be thrown by any client request:
 
 ## Posting events
 
-Create events using the factory methods on `Sift\Event`, e.g.:
+Create instances of `Sift\Event`, e.g.:
 ```php
-use Sift\Event;
-use Sift\Micros;
-
-// Use one of the predefined event constructors:
-$event = Event::transactionEvent(array(
+$event = new Sift\Event(array(
+    '$type' => Sift\Event::TYPE_TRANSACTION,
     '$user_id' => '1234',
-    '$amount' => Micros::fromDollars(1.23),
     // ...
 ));
+```
 
-// Or, create a custom event:
-$fooEvent = Event::customEvent('transmogrified_into_llama', array(
+Alternatively, factory constructors are provided for each event type:
+```php
+$event = Sift\Event::transactionEvent(array(
     '$user_id' => '1234',
-    'some_key' => 'some_value',
     // ...
 ));
 ```
@@ -63,14 +60,12 @@ posting event data.
 
 Create label objects using the factory methods of `Sift\Label`, e.g.:
 ```php
-use Sift\Label;
-
 // Label a user as fraudulent, optionally specifying reason codes and an explanation:
-$reasons = array(Label::REASON_SPAM);
-$label = Label::bad($reasons, 'User engaged in phishing attack')
+$reasons = array(Sift\Label::REASON_SPAM);
+$label = Sift\Label::bad($reasons, 'User engaged in phishing attack')
 
 // Alternatively, correct a false positive by labelling a user as non-fraudulent:
-$good = Label::good('User is capable of time travel');
+$good = Sift\Label::good('User is capable of time travel');
 ```
 
 Then post the event via `Sift\Client::labelUser()`:
