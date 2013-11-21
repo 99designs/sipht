@@ -11,6 +11,18 @@ namespace Sift;
  */
 class Event extends Payload
 {
+    const TYPE_CREATE_ORDER = '$create_order';
+    const TYPE_TRANSACTION = '$transaction';
+    const TYPE_CREATE_ACCOUNT = '$create_account';
+    const TYPE_UPDATE_ACCOUNT = '$update_account';
+    const TYPE_ADD_ITEM_TO_CART = '$add_item_to_cart';
+    const TYPE_REMOVE_ITEM_FROM_CART = '$remove_item_from_cart';
+    const TYPE_SUBMIT_REVIEW = '$submit_review';
+    const TYPE_SEND_MESSAGE = '$send_message';
+    const TYPE_LOGIN = '$login';
+    const TYPE_LOGOUT = '$logout';
+    const TYPE_LINK_SESSION_TO_USER = '$link_session_to_user';
+
     /**
      * Create and return a $create_order event. This event should be used when
      * a user registers an intention to make a purchase.
@@ -21,7 +33,7 @@ class Event extends Payload
      */
     public static function createOrderEvent(array $fields)
     {
-        return self::factory('$create_order', $fields);
+        return self::factory(self::TYPE_CREATE_ORDER, $fields);
     }
 
     /**
@@ -34,7 +46,7 @@ class Event extends Payload
      */
     public static function transactionEvent(array $fields)
     {
-        return self::factory('$transaction', $fields);
+        return self::factory(self::TYPE_TRANSACTION, $fields);
     }
 
     /**
@@ -47,7 +59,7 @@ class Event extends Payload
      */
     public static function createAccountEvent(array $fields)
     {
-        return self::factory('$create_account', $fields);
+        return self::factory(self::TYPE_CREATE_ACCOUNT, $fields);
     }
 
     /**
@@ -60,7 +72,7 @@ class Event extends Payload
      */
     public static function updateAccountEvent(array $fields)
     {
-        return self::factory('$update_account', $fields);
+        return self::factory(self::TYPE_UPDATE_ACCOUNT, $fields);
     }
 
     /**
@@ -73,7 +85,7 @@ class Event extends Payload
      */
     public static function addItemToCartEvent(array $fields)
     {
-        return self::factory('$add_item_to_cart', $fields);
+        return self::factory(self::TYPE_ADD_ITEM_TO_CART, $fields);
     }
 
     /**
@@ -86,7 +98,7 @@ class Event extends Payload
      */
     public static function removeItemFromCartEvent(array $fields)
     {
-        return self::factory('$remove_item_from_cart', $fields);
+        return self::factory(self::TYPE_REMOVE_ITEM_FROM_CART, $fields);
     }
 
     /**
@@ -99,7 +111,7 @@ class Event extends Payload
      */
     public static function submitReviewEvent(array $fields)
     {
-        return self::factory('$submit_review', $fields);
+        return self::factory(self::TYPE_SUBMIT_REVIEW, $fields);
     }
 
     /**
@@ -112,7 +124,7 @@ class Event extends Payload
      */
     public static function sendMessageEvent(array $fields)
     {
-        return self::factory('$send_message', $fields);
+        return self::factory(self::TYPE_SEND_MESSAGE, $fields);
     }
 
     /**
@@ -125,7 +137,7 @@ class Event extends Payload
      */
     public static function loginEvent(array $fields)
     {
-        return self::factory('$login', $fields);
+        return self::factory(self::TYPE_LOGIN, $fields);
     }
 
     /**
@@ -138,7 +150,7 @@ class Event extends Payload
      */
     public static function logoutEvent(array $fields)
     {
-        return self::factory('$logout', $fields);
+        return self::factory(self::TYPE_LOGOUT, $fields);
     }
 
     /**
@@ -152,7 +164,7 @@ class Event extends Payload
      */
     public static function linkSessionToUserEvent(array $fields)
     {
-        return self::factory('$link_session_to_user', $fields);
+        return self::factory(self::TYPE_LINK_SESSION_TO_USER, $fields);
     }
 
     /**
