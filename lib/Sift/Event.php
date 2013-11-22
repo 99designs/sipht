@@ -11,17 +11,45 @@ namespace Sift;
  */
 class Event extends Payload
 {
-    const TYPE_CREATE_ORDER = '$create_order';
-    const TYPE_TRANSACTION = '$transaction';
-    const TYPE_CREATE_ACCOUNT = '$create_account';
-    const TYPE_UPDATE_ACCOUNT = '$update_account';
-    const TYPE_ADD_ITEM_TO_CART = '$add_item_to_cart';
+    const TYPE_CREATE_ORDER          = '$create_order';
+    const TYPE_TRANSACTION           = '$transaction';
+    const TYPE_CREATE_ACCOUNT        = '$create_account';
+    const TYPE_UPDATE_ACCOUNT        = '$update_account';
+    const TYPE_ADD_ITEM_TO_CART      = '$add_item_to_cart';
     const TYPE_REMOVE_ITEM_FROM_CART = '$remove_item_from_cart';
-    const TYPE_SUBMIT_REVIEW = '$submit_review';
-    const TYPE_SEND_MESSAGE = '$send_message';
-    const TYPE_LOGIN = '$login';
-    const TYPE_LOGOUT = '$logout';
-    const TYPE_LINK_SESSION_TO_USER = '$link_session_to_user';
+    const TYPE_SUBMIT_REVIEW         = '$submit_review';
+    const TYPE_SEND_MESSAGE          = '$send_message';
+    const TYPE_LOGIN                 = '$login';
+    const TYPE_LOGOUT                = '$logout';
+    const TYPE_LINK_SESSION_TO_USER  = '$link_session_to_user';
+
+    // $transaction_type values (used in $transaction events)
+    const TRANSACTION_TYPE_SALE      = '$sale';
+    const TRANSACTION_TYPE_AUTHORIZE = '$authorize';
+    const TRANSACTION_TYPE_CAPTURE   = '$capture';
+    const TRANSACTION_TYPE_VOID      = '$void';
+    const TRANSACTION_TYPE_REFUND    = '$refund';
+
+    // $transaction_status values (used in $transaction events)
+    const TRANSACTION_STATUS_SUCCESS = '$success';
+    const TRANSACTION_STATUS_FAILURE = '$failure';
+    const TRANSACTION_STATUS_PENDING = '$pending';
+
+    // $payment_type values (used in nested $payment_method)
+    const PAYMENT_TYPE_CREDIT_CARD              = '$credit_card';
+    const PAYMENT_TYPE_ELECTRONIC_FUND_TRANSFER = '$electronic_fund_transfer';
+    const PAYMENT_TYPE_STORE_CREDIT             = '$store_credit';
+    const PAYMENT_TYPE_GIFT_CARD                = '$gift_card';
+    const PAYMENT_TYPE_POINTS                   = '$points';
+    const PAYMENT_TYPE_FINANCING                = '$financing';
+    const PAYMENT_TYPE_THIRD_PARTY_PROCESSOR    = '$third_party_processor';
+
+    // $payment_gateway values (used in nested $payment_method)
+    const PAYMENT_GATEWAY_STRIPE          = '$stripe';
+    const PAYMENT_GATEWAY_BRAINTREE       = '$braintree';
+    const PAYMENT_GATEWAY_PAYPAL          = '$paypal';
+    const PAYMENT_GATEWAY_AMAZON_PAYMENTS = '$amazon_payments';
+    const PAYMENT_AUTHORIZENET            = '$authorizenet';
 
     /**
      * Create and return a $create_order event. This event should be used when
