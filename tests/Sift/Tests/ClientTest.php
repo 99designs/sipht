@@ -48,7 +48,7 @@ class ClientTest extends SiftTestCase
         $this->httpMock->addResponse(new Response(200, null, json_encode(array(
             'baz' => 'bla',
         ))));
-        $response = $this->client->labelUser('1234', new Label(array('foo' => 'bar')));
+        $response = $this->client->labelUser(new Label('1234', array('foo' => 'bar')));
         $requests = $this->httpMock->getReceivedRequests();
 
         $this->assertEqualAssociativeArrays($response, array('baz' => 'bla'));

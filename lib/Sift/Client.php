@@ -79,14 +79,14 @@ class Client
      * @param Sift\Label $label
      * @return array
      */
-    public function labelUser($userId, Label $label)
+    public function labelUser(Label $label)
     {
         $json = $label
             ->withKey($this->apiKey)
             ->toJson();
 
         return $this->send(
-            $this->http->post("users/$userId/labels", null, $json)
+            $this->http->post("users/{$label->userId}/labels", null, $json)
         );
     }
 

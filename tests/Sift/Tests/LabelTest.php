@@ -8,44 +8,42 @@ class LabelTest extends SiftTestCase
 {
     public function testGood()
     {
-        $this->assertEqualAssociativeArrays(
-            array(
-                '$is_bad' => false,
-            ),
-            Label::good()
-        );
+        $label = Label::good('1234');
+        $this->assertEqualAssociativeArrays(array('$is_bad' => false), $label);
+        $this->assertEquals('1234', $label->userId);
     }
 
     public function testGoodWithDescription()
     {
+        $label = Label::good('1234', 'foo');
         $this->assertEqualAssociativeArrays(
             array(
                 '$is_bad' => false,
                 '$description' => 'foo',
             ),
-            Label::good('foo')
+            $label
         );
+        $this->assertEquals('1234', $label->userId);
     }
 
     public function testBad()
     {
-        $this->assertEqualAssociativeArrays(
-            array(
-                '$is_bad' => true,
-            ),
-            Label::bad()
-        );
+        $label = Label::bad('1234');
+        $this->assertEqualAssociativeArrays(array('$is_bad' => true), $label);
+        $this->assertEquals('1234', $label->userId);
     }
 
     public function testBadWithReasonsAndDescription()
     {
+        $label = Label::bad('1234', array(Label::REASON_CHARGEBACK, Label::REASON_SPAM), 'foo');
         $this->assertEqualAssociativeArrays(
             array(
                 '$is_bad' => true,
                 '$reasons' => array('$chargeback', '$spam'),
                 '$description' => 'foo',
             ),
-            Label::bad(array(Label::REASON_CHARGEBACK, Label::REASON_SPAM), 'foo')
+            $label
         );
+        $this->assertEquals('1234', $label->userId);
     }
 }

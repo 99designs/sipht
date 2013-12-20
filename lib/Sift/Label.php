@@ -15,14 +15,25 @@ class Label extends Payload
     const REASON_REFERRAL = '$referral';
     const REASON_DUPLICATE_ACCOUNT = '$duplicate_account';
 
+    // This property is not part of the payload. It forms part of the submission
+    // URL.
+    public $userId;
+
+    public function __construct($userId, $data)
+    {
+        $this->userId = $userId;
+        parent::__construct($data);
+    }
+
     /**
      * Create and return a label that identifies a user as non-fraudulent. This
      * is used to correct the Sift Science learning model when it incorrectly
      * identifies a user as fraudulent.
      *
+     * @param string $userId      unique user ID
      * @param string $description optional human-readable explanation
      */
-    public static function good($description = null)
+    public static function good($userId, $description = null)
     {
         $labelData = array('$is_bad' => false);
 
@@ -30,17 +41,18 @@ class Label extends Payload
             $labelData['$description'] = $description;
         }
 
-        return new self($labelData);
+        return new self($userId, $labelData);
     }
 
     /**
      * Create and return a label that identifies a user as fraudulent. This is
      * used to train the Sift Science learning model.
      *
+     * @param string $userId      unique user ID
      * @param array  $reasons     optional array of reason codes
      * @param string $description optional human-readable explanation
      */
-    public static function bad(array $reasons = null, $description = null)
+    public static function bad($userId, array $reasons = null, $description = null)
     {
         $labelData = array('$is_bad' => true);
 
@@ -51,6 +63,6 @@ class Label extends Payload
             $labelData['$description'] = $description;
         }
 
-        return new self($labelData);
+        return new self($userId, $labelData);
     }
 }
