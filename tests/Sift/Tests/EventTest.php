@@ -137,4 +137,14 @@ class EventTest extends SiftTestCase
             Event::customEvent('some_event', array('foo' => 'bar'))
         );
     }
+
+    public function testEquals()
+    {
+        $event = new Event(array('foo' => 'bar', 'baz' => 'bla'));
+        $equalEvent = new Event(array('baz' => 'bla', 'foo' => 'bar'));
+        $unequalEvent = new Event(array('baz' => 'bla', 'foo' => 'butts'));
+
+        $this->assertTrue($event->equals($equalEvent));
+        $this->assertFalse($event->equals($unequalEvent));
+    }
 }

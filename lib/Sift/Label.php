@@ -65,4 +65,15 @@ class Label extends Payload
 
         return new self($userId, $labelData);
     }
+
+    /**
+     * Compare two labels for equality.
+     * @param object $that object to compare
+     * @return bool
+     */
+    public function equals($that)
+    {
+        return parent::equals($that)
+            && $this->userId == $that->userId;
+    }
 }

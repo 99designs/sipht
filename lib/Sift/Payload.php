@@ -36,4 +36,9 @@ class Payload extends \ArrayObject
         return $json;
     }
 
+    public function equals($that)
+    {
+        return get_class($this) == get_class($that)
+            && (array) $this == (array) $that;
+    }
 }

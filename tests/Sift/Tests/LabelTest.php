@@ -46,4 +46,16 @@ class LabelTest extends SiftTestCase
         );
         $this->assertEquals('1234', $label->userId);
     }
+
+    public function testEquals()
+    {
+        $label = new Label('1234', array('foo' => 'bar', 'baz' => 'bla'));
+        $equalLabel = new Label('1234', array('baz' => 'bla', 'foo' => 'bar'));
+        $unequalLabel1 = new Label('2345', array('foo' => 'bar', 'baz' => 'bla'));
+        $unequalLabel2 = new Label('1234', array('foo' => 'butts', 'baz' => 'bla'));
+
+        $this->assertTrue($label->equals($equalLabel));
+        $this->assertFalse($label->equals($unequalLabel1));
+        $this->assertFalse($label->equals($unequalLabel2));
+    }
 }
