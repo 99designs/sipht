@@ -41,7 +41,7 @@ class Label extends Payload
             $labelData['$description'] = $description;
         }
 
-        return new self($userId, $labelData);
+        return new static($userId, $labelData);
     }
 
     /**
@@ -63,7 +63,7 @@ class Label extends Payload
             $labelData['$description'] = $description;
         }
 
-        return new self($userId, $labelData);
+        return new static($userId, $labelData);
     }
 
     /**

@@ -61,7 +61,7 @@ class Event extends Payload
      */
     public static function createOrderEvent(array $fields)
     {
-        return self::factory(self::TYPE_CREATE_ORDER, $fields);
+        return static::factory(self::TYPE_CREATE_ORDER, $fields);
     }
 
     /**
@@ -74,7 +74,7 @@ class Event extends Payload
      */
     public static function transactionEvent(array $fields)
     {
-        return self::factory(self::TYPE_TRANSACTION, $fields);
+        return static::factory(self::TYPE_TRANSACTION, $fields);
     }
 
     /**
@@ -87,7 +87,7 @@ class Event extends Payload
      */
     public static function createAccountEvent(array $fields)
     {
-        return self::factory(self::TYPE_CREATE_ACCOUNT, $fields);
+        return static::factory(self::TYPE_CREATE_ACCOUNT, $fields);
     }
 
     /**
@@ -100,7 +100,7 @@ class Event extends Payload
      */
     public static function updateAccountEvent(array $fields)
     {
-        return self::factory(self::TYPE_UPDATE_ACCOUNT, $fields);
+        return static::factory(self::TYPE_UPDATE_ACCOUNT, $fields);
     }
 
     /**
@@ -113,7 +113,7 @@ class Event extends Payload
      */
     public static function addItemToCartEvent(array $fields)
     {
-        return self::factory(self::TYPE_ADD_ITEM_TO_CART, $fields);
+        return static::factory(self::TYPE_ADD_ITEM_TO_CART, $fields);
     }
 
     /**
@@ -126,7 +126,7 @@ class Event extends Payload
      */
     public static function removeItemFromCartEvent(array $fields)
     {
-        return self::factory(self::TYPE_REMOVE_ITEM_FROM_CART, $fields);
+        return static::factory(self::TYPE_REMOVE_ITEM_FROM_CART, $fields);
     }
 
     /**
@@ -139,7 +139,7 @@ class Event extends Payload
      */
     public static function submitReviewEvent(array $fields)
     {
-        return self::factory(self::TYPE_SUBMIT_REVIEW, $fields);
+        return static::factory(self::TYPE_SUBMIT_REVIEW, $fields);
     }
 
     /**
@@ -152,7 +152,7 @@ class Event extends Payload
      */
     public static function sendMessageEvent(array $fields)
     {
-        return self::factory(self::TYPE_SEND_MESSAGE, $fields);
+        return static::factory(self::TYPE_SEND_MESSAGE, $fields);
     }
 
     /**
@@ -165,7 +165,7 @@ class Event extends Payload
      */
     public static function loginEvent(array $fields)
     {
-        return self::factory(self::TYPE_LOGIN, $fields);
+        return static::factory(self::TYPE_LOGIN, $fields);
     }
 
     /**
@@ -178,7 +178,7 @@ class Event extends Payload
      */
     public static function logoutEvent(array $fields)
     {
-        return self::factory(self::TYPE_LOGOUT, $fields);
+        return static::factory(self::TYPE_LOGOUT, $fields);
     }
 
     /**
@@ -192,7 +192,7 @@ class Event extends Payload
      */
     public static function linkSessionToUserEvent(array $fields)
     {
-        return self::factory(self::TYPE_LINK_SESSION_TO_USER, $fields);
+        return static::factory(self::TYPE_LINK_SESSION_TO_USER, $fields);
     }
 
     /**
@@ -206,11 +206,11 @@ class Event extends Payload
      */
     public static function customEvent($type, array $fields)
     {
-        return self::factory($type, $fields);
+        return static::factory($type, $fields);
     }
 
     /**
-     * Create an event of a given type, using the given fields
+     * Create an event of a given type, using the given fields.
      *
      * @param string $type   event type
      * @param array  $fields event data
@@ -219,7 +219,7 @@ class Event extends Payload
     protected static function factory($type, array $fields)
     {
         $fields['$type'] = $type;
-        return self::construct($fields);
+        return static::construct($fields);
     }
 
     /**
@@ -230,6 +230,6 @@ class Event extends Payload
      */
     public static function construct(array $fields)
     {
-        return new self($fields);
+        return new static($fields);
     }
 }
