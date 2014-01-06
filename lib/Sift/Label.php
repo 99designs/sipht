@@ -37,7 +37,7 @@ class Label extends Payload
     {
         $labelData = array('$is_bad' => false);
 
-        if ($description) {
+        if (!empty($description)) {
             $labelData['$description'] = $description;
         }
 
@@ -56,10 +56,10 @@ class Label extends Payload
     {
         $labelData = array('$is_bad' => true);
 
-        if ($reasons) {
+        if (!empty($reasons)) {
             $labelData['$reasons'] = $reasons;
         }
-        if ($description) {
+        if (!empty($description)) {
             $labelData['$description'] = $description;
         }
 
