@@ -51,6 +51,10 @@ class Event extends Payload
     const PAYMENT_GATEWAY_AMAZON_PAYMENTS = '$amazon_payments';
     const PAYMENT_AUTHORIZENET            = '$authorizenet';
 
+    // $login_status values (used in $login events)
+    const LOGIN_STATUS_SUCCESS = '$success';
+    const LOGIN_STATUS_FAILURE = '$failure';
+
     /**
      * Create and return a $create_order event. This event should be used when
      * a user registers an intention to make a purchase.
