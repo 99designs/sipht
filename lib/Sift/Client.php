@@ -23,17 +23,17 @@ class Client
     const API_ENDPOINT = 'https://api.siftscience.com';
 
     private $apiKey;
-    private $http;
+    private $httpClient;
 
     /**
      * Constructor
-     * @param string $apiKey Sift API key
-     * @param object $http   something matching the Guzzle\Http\Client interface
+     * @param string $apiKey     Sift API key
+     * @param object $httpClient something matching the Guzzle\Http\Client interface
      */
-    public function __construct($apiKey, $http = null)
+    public function __construct($apiKey, $httpClient = null)
     {
         $this->apiKey = $apiKey;
-        $this->http = $http ?: $this->defaultHttpClient();
+        $this->httpClient = $httpClient ?: $this->defaultHttpClient();
     }
 
     /**
@@ -65,7 +65,7 @@ class Client
             ->toJson();
 
         return $this->send(
-            $this->http->post('events', null, $json)
+            $this->httpClient->post('events', null, $json)
         );
     }
 
@@ -86,7 +86,7 @@ class Client
             ->toJson();
 
         return $this->send(
-            $this->http->post("users/{$label->userId}/labels", null, $json)
+            $this->httpClient->post("users/{$label->userId}/labels", null, $json)
         );
     }
 
@@ -107,7 +107,7 @@ class Client
         );
 
         $scoreData = $this->send(
-            $this->http->get($path)
+            $this->httpClient->get($path)
         );
 
         return Score::fromArray($scoreData);
