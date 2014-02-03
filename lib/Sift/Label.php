@@ -8,11 +8,11 @@ namespace Sift;
  */
 class Label extends Payload
 {
-    const REASON_CHARGEBACK = '$chargeback';
-    const REASON_SPAM = '$spam';
-    const REASON_FUNNELING = '$funneling';
-    const REASON_FAKE = '$fake';
-    const REASON_REFERRAL = '$referral';
+    const REASON_CHARGEBACK        = '$chargeback';
+    const REASON_SPAM              = '$spam';
+    const REASON_FUNNELING         = '$funneling';
+    const REASON_FAKE              = '$fake';
+    const REASON_REFERRAL          = '$referral';
     const REASON_DUPLICATE_ACCOUNT = '$duplicate_account';
 
     // This property is not part of the payload. It forms part of the submission
