@@ -65,7 +65,7 @@ $reasons = array(Sift\Label::REASON_SPAM);
 $label = Sift\Label::bad($reasons, 'User engaged in phishing attack')
 
 // Alternatively, correct a false positive by labelling a user as non-fraudulent:
-$good = Sift\Label::good('User is capable of time travel');
+$good = Sift\Label::good('Mistakenly identified as fraudulent');
 ```
 
 Then post the event via `Sift\Client::labelUser()`:
