@@ -2,25 +2,38 @@
 
 namespace Sift;
 
+use Guzzle\Http\Client as HttpClient;
+use Guzzle\Http\Exception\HttpException as GuzzleHttpException;
+use Guzzle\Http\Message\Request;
+use Sift\Event;
+use Sift\Exception\HttpException as SiftHttpException;
+use Sift\Label;
+
 /**
  * A minimal wrapper around the Sift REST API.
+ *
+ * This class implements three API calls:
+ *  - submitting events (`postEvent()`)
+ *  - labelling users (`labelUser()`)
+ *  - fetching scores (`userScore()`)
  */
 class Client
 {
+    const API_VERSION = '203';
     const API_ENDPOINT = 'https://api.siftscience.com';
 
     private $apiKey;
-    private $http;
+    private $httpClient;
 
     /**
      * Constructor
-     * @param string $apiKey Sift API key
-     * @param object $http   something matching the Guzzle\Http\Client interface
+     * @param string $apiKey     Sift API key
+     * @param object $httpClient something matching the Guzzle\Http\Client interface
      */
-    public function __construct($apiKey, $http=null)
+    public function __construct($apiKey, $httpClient = null)
     {
         $this->apiKey = $apiKey;
-        $this->http = $http ?: $this->defaultHttpClient();
+        $this->httpClient = $httpClient ?: $this->defaultHttpClient();
     }
 
     /**
@@ -29,24 +42,94 @@ class Client
      */
     public function defaultHttpClient()
     {
-        return new \Guzzle\Http\Client(self::API_ENDPOINT);
+        return new HttpClient(sprintf(
+            '%s/v%s',
+            self::API_ENDPOINT,
+            self::API_VERSION
+        ));
+    }
+
+    /**
+     * Fetch the configured HTTP client
+     * @return Guzzle\Http\Client
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 
     /**
      * Post an event to the REST API and return decoded JSON response.
+     *
+     * @see https://siftscience.com/docs/references/events-api
+     * @see Sift\Event
+     *
      * @param Sift\Event $event
      * @return array
      */
-    public function postEvent($event)
+    public function postEvent(Event $event)
     {
-        $json = $event->withKey($this->apiKey)->toJson();
+        $json = $event
+            ->withKey($this->apiKey)
+            ->toJson();
+
+        return $this->send(
+            $this->httpClient->post('events', null, $json)
+        );
+    }
+
+    /**
+     * Label a given user and return decoded JSON response.
+     *
+     * @see https://siftscience.com/docs/references/labels-api
+     * @see Sift\Label
+     *
+     * @param string     $userId
+     * @param Sift\Label $label
+     * @return array
+     */
+    public function labelUser(Label $label)
+    {
+        $json = $label
+            ->withKey($this->apiKey)
+            ->toJson();
+
+        return $this->send(
+            $this->httpClient->post("users/{$label->userId}/labels", null, $json)
+        );
+    }
+
+    /**
+     * Fetch user fraud score details
+     *
+     * @see https://siftscience.com/docs/getting-scores
+     *
+     * @param string $userId
+     * @return Sift\Score
+     */
+    public function userScore($userId)
+    {
+        $path = sprintf(
+            'score/%s/?%s',
+            $userId,
+            http_build_query(array('api_key' => $this->apiKey))
+        );
+
+        $scoreData = $this->send(
+            $this->httpClient->get($path)
+        );
+
+        return Score::fromArray($scoreData);
+    }
+
+    public function send(Request $request)
+    {
         try {
-            return $this->http
-                ->post('/v202/events', null, $json)
+            return $request
                 ->send()
                 ->json();
-        } catch (\Guzzle\Http\Exception\HttpException $ex) {
-            throw Exception\HttpException::fromGuzzleException($ex);
+        } catch (GuzzleHttpException $ex) {
+            throw SiftHttpException::fromGuzzleException($ex);
         }
     }
 }

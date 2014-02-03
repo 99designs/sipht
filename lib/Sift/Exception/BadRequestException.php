@@ -3,7 +3,7 @@
 namespace Sift\Exception;
 
 /**
- * Corresponds to an HTTP 400; generated if we make an invalid request to the
+ * Corresponds to an HTTP 40x; generated if we make an invalid request to the
  * Sift Science API.
  */
 class BadRequestException extends \Sift\Exception
