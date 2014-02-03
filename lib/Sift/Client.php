@@ -44,9 +44,18 @@ class Client
     {
         return new HttpClient(sprintf(
             '%s/v%s',
-            self::API_ENDPOINT.
+            self::API_ENDPOINT,
             self::API_VERSION
         ));
+    }
+
+    /**
+     * Fetch the configured HTTP client
+     * @return Guzzle\Http\Client
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 
     /**

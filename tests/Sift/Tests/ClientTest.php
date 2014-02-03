@@ -26,6 +26,13 @@ class ClientTest extends SiftTestCase
         $this->httpMock = $mock;
     }
 
+    public function testDefaultConfiguration()
+    {
+        $client = new Client(self::API_KEY);
+        $httpClient = $client->getHttpClient();
+        $this->assertEquals('https://api.siftscience.com/v203', $httpClient->getBaseUrl());
+    }
+
     public function testPostEvent()
     {
         $this->httpMock->addResponse(new Response(200, null, json_encode(array(
