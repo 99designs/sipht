@@ -1,5 +1,7 @@
 A PHP client for the [Sift Science][1] REST API.
 
+Note: Sift Science now offer their own PHP bindings [here][2].
+
 [![Build Status](https://travis-ci.org/99designs/sipht.png)](https://travis-ci.org/99designs/sipht)
 
 This client supports the three basic operations exposed by the Sift API: posting
@@ -91,3 +93,4 @@ See https://siftscience.com/docs/getting-scores for more information on fetching
 user fraud scores.
 
  [1]: https://siftscience.com/
+ [2]: https://github.com/SiftScience/sift-php
