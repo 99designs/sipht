@@ -49,6 +49,8 @@ class Event extends Payload
     const PAYMENT_GATEWAY_BRAINTREE       = '$braintree';
     const PAYMENT_GATEWAY_PAYPAL          = '$paypal';
     const PAYMENT_GATEWAY_AMAZON_PAYMENTS = '$amazon_payments';
+    const PAYMENT_GATEWAY_ADYEN           = '$adyen';
+    const PAYMENT_GATEWAY_WORLDPAY        = '$worldpay';
     const PAYMENT_AUTHORIZENET            = '$authorizenet';
 
     // $login_status values (used in $login events)
