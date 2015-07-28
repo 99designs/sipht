@@ -10,7 +10,7 @@ class Payload extends \ArrayObject
     /**
      * Returns a copy of this payload with an updated API key
      * @param string $apiKey
-     * @return Sift\Event
+     * @return Event
      */
     public function withKey($apiKey)
     {
