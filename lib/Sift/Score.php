@@ -31,7 +31,7 @@ class Score
         return new self(
             $data['user_id'],
             $data['score'],
-            $data['reasons']
+            isset($data['reasons']) ? $data['reasons'] : []
         );
     }
 
