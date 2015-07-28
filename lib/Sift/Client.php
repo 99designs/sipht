@@ -5,9 +5,7 @@ namespace Sift;
 use Guzzle\Http\Client as HttpClient;
 use Guzzle\Http\Exception\HttpException as GuzzleHttpException;
 use Guzzle\Http\Message\Request;
-use Sift\Event;
 use Sift\Exception\HttpException as SiftHttpException;
-use Sift\Label;
 
 /**
  * A minimal wrapper around the Sift REST API.
@@ -51,7 +49,7 @@ class Client
 
     /**
      * Fetch the configured HTTP client
-     * @return Guzzle\Http\Client
+     * @return HttpClient
      */
     public function getHttpClient()
     {
@@ -62,9 +60,9 @@ class Client
      * Post an event to the REST API and return decoded JSON response.
      *
      * @see https://siftscience.com/docs/references/events-api
-     * @see Sift\Event
+     * @see Event
      *
-     * @param Sift\Event $event
+     * @param Event $event
      * @return array
      */
     public function postEvent(Event $event)
@@ -82,10 +80,10 @@ class Client
      * Label a given user and return decoded JSON response.
      *
      * @see https://siftscience.com/docs/references/labels-api
-     * @see Sift\Label
+     * @see Label
      *
      * @param string     $userId
-     * @param Sift\Label $label
+     * @param Label $label
      * @return array
      */
     public function labelUser(Label $label)
@@ -105,7 +103,7 @@ class Client
      * @see https://siftscience.com/docs/getting-scores
      *
      * @param string $userId
-     * @return Sift\Score
+     * @return Score
      */
     public function userScore($userId)
     {

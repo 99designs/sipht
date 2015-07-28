@@ -19,8 +19,8 @@ class Score
      * $data specifies a non-zero 'status' property.
      *
      * @param array $data
-     * @return Sift\Score
-     * @throws Sift\Exception\ScoreException
+     * @return Score
+     * @throws \Sift\Exception\ScoreException
      */
     public static function fromArray(array $data)
     {
@@ -31,7 +31,7 @@ class Score
         return new self(
             $data['user_id'],
             $data['score'],
-            $data['reasons']
+            isset($data['reasons']) ? $data['reasons'] : array()
         );
     }
 

@@ -63,7 +63,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-create-order
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function createOrderEvent(array $fields)
     {
@@ -76,7 +76,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-transaction
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function transactionEvent(array $fields)
     {
@@ -89,7 +89,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-create-account
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function createAccountEvent(array $fields)
     {
@@ -102,7 +102,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-update-account
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function updateAccountEvent(array $fields)
     {
@@ -115,7 +115,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-add-item-to-cart
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function addItemToCartEvent(array $fields)
     {
@@ -128,7 +128,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#remove-item-from-cart
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function removeItemFromCartEvent(array $fields)
     {
@@ -141,7 +141,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-submit-review
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function submitReviewEvent(array $fields)
     {
@@ -154,7 +154,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-send-message
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function sendMessageEvent(array $fields)
     {
@@ -167,7 +167,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-login
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function loginEvent(array $fields)
     {
@@ -180,7 +180,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-logout
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function logoutEvent(array $fields)
     {
@@ -194,7 +194,7 @@ class Event extends Payload
      *
      * @see https://siftscience.com/docs/references/events-api#event-link-session-to-user
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function linkSessionToUserEvent(array $fields)
     {
@@ -208,7 +208,7 @@ class Event extends Payload
      * @see https://siftscience.com/docs/references/events-api#events-custom-events
      * @param string $type   event type
      * @param array  $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function customEvent($type, array $fields)
     {
@@ -220,7 +220,7 @@ class Event extends Payload
      *
      * @param string $type   event type
      * @param array  $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     protected static function factory($type, array $fields)
     {
@@ -232,7 +232,7 @@ class Event extends Payload
      * Create an event from an array of fields.
      *
      * @param array $fields event data
-     * @return Sift\Event
+     * @return Event
      */
     public static function construct(array $fields)
     {
