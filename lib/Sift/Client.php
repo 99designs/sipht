@@ -2,10 +2,13 @@
 
 namespace Sift;
 
-use Guzzle\Http\Client as HttpClient;
-use Guzzle\Http\Exception\HttpException as GuzzleHttpException;
-use Guzzle\Http\Message\Request;
-use Sift\Exception\HttpException as SiftHttpException;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use function GuzzleHttp\Psr7\stream_for;
+use Sift\Exception\BadRequestException;
+use Sift\Exception\HttpException;
+use Sift\Exception\ServerErrorException;
 
 /**
  * A minimal wrapper around the Sift REST API.
@@ -26,7 +29,7 @@ class Client
     /**
      * Constructor
      * @param string $apiKey     Sift API key
-     * @param object $httpClient something matching the Guzzle\Http\Client interface
+     * @param HttpClient $httpClient something matching the HttpClient interface
      */
     public function __construct($apiKey, $httpClient = null)
     {
@@ -36,15 +39,19 @@ class Client
 
     /**
      * Return a default client for posting HTTP requests.
-     * @return object
+     * @return HttpClient
      */
     public function defaultHttpClient()
     {
-        return new HttpClient(sprintf(
-            '%s/v%s',
+        $baseUri = sprintf(
+            '%s/v%s/',
             self::API_ENDPOINT,
             self::API_VERSION
-        ));
+        );
+
+        return new HttpClient([
+            'base_uri' => $baseUri,
+        ]);
     }
 
     /**
@@ -71,9 +78,9 @@ class Client
             ->withKey($this->apiKey)
             ->toJson();
 
-        return $this->send(
-            $this->httpClient->post('events', null, $json)
-        );
+        $json = $this->send('POST', "events", $json);
+
+        return $json;
     }
 
     /**
@@ -82,7 +89,6 @@ class Client
      * @see https://siftscience.com/docs/references/labels-api
      * @see Label
      *
-     * @param string     $userId
      * @param Label $label
      * @return array
      */
@@ -92,9 +98,9 @@ class Client
             ->withKey($this->apiKey)
             ->toJson();
 
-        return $this->send(
-            $this->httpClient->post("users/{$label->userId}/labels", null, $json)
-        );
+        $json = $this->send('POST', "users/{$label->userId}/labels", $json);
+
+        return $json;
     }
 
     /**
@@ -113,21 +119,33 @@ class Client
             http_build_query(array('api_key' => $this->apiKey))
         );
 
-        $scoreData = $this->send(
-            $this->httpClient->get($path)
-        );
+        $json = $this->send('GET', $path);
 
-        return Score::fromArray($scoreData);
+        return Score::fromArray($json);
     }
 
-    public function send(Request $request)
+    public function send($method, $url, $jsonBody = null)
     {
         try {
-            return $request
-                ->send()
-                ->json();
-        } catch (GuzzleHttpException $ex) {
-            throw SiftHttpException::fromGuzzleException($ex);
+            $options = [];
+            if ($jsonBody) {
+                $options = [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                    'body' => $jsonBody,
+                ];
+            }
+
+            $response = $this->httpClient->request($method, $url, $options);
+
+            return json_decode($response->getBody(), true);
+        } catch (ClientException $ex) {
+            throw BadRequestException::fromClientErrorResponseException($ex);
+        } catch (ServerException $ex) {
+            throw ServerErrorException::fromServerErrorResponseException($ex);
+        } catch (\Exception $ex) {
+            throw new HttpException($ex->getMessage(), 0, $ex);
         }
     }
 }

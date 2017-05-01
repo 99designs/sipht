@@ -13,7 +13,7 @@ class BadRequestException extends \Sift\Exception
      */
     public static function fromClientErrorResponseException($ex)
     {
-        $errorData = $ex->getResponse()->json();
+        $errorData = json_decode($ex->getResponse()->getBody(), true);
         return new self(
             $errorData['error_message'],
             $errorData['status'],

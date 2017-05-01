@@ -2,134 +2,143 @@
 
 namespace Sift\Tests;
 
-use Guzzle\Http\Client as GuzzleClient;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-use Guzzle\Plugin\Mock\MockPlugin;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Client as HttpClient;
 use Sift\Client;
 use Sift\Event;
+use Sift\Exception\BadRequestException;
+use Sift\Exception\HttpException;
+use Sift\Exception\ServerErrorException;
 use Sift\Label;
 
 class ClientTest extends SiftTestCase
 {
     const API_KEY = 'ABC123';
 
+    private $mockHandler;
+    private $requests;
+    private $client;
+
     public function setUp()
     {
-        $http = new GuzzleClient('http://example.com/v203');
-        $mock = new MockPlugin();
-        $http->addSubscriber($mock);
+        $this->mockHandler = new MockHandler([]);
 
-        $this->client = new Client(self::API_KEY, $http);
-        $this->http = $http;
-        $this->httpMock = $mock;
+        $this->requests = [];
+        $history = Middleware::history($this->requests);
+        $handler = HandlerStack::create($this->mockHandler);
+        $handler->push($history);
+
+        $httpClient = new HttpClient([
+            'handler' => $handler,
+            'base_uri' => 'http://example.com/v203/',
+        ]);
+
+        $this->client = new Client('ABC123', $httpClient);
     }
 
     public function testDefaultConfiguration()
     {
         $client = new Client(self::API_KEY);
         $httpClient = $client->getHttpClient();
-        $this->assertEquals('https://api.siftscience.com/v203', $httpClient->getBaseUrl());
+
+        $this->assertEquals('https://api.siftscience.com/v203/', $httpClient->getConfig('base_uri'));
     }
 
     public function testPostEvent()
     {
-        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+        $this->mockHandler->append(new Response(200, [], json_encode([
             'baz' => 'bla',
-        ))));
-        $response = $this->client->postEvent(new Event(array('foo' => 'bar')));
-        $requests = $this->httpMock->getReceivedRequests();
+        ])));
+        $response = $this->client->postEvent(new Event(['foo' => 'bar']));
 
-        $this->assertEqualAssociativeArrays($response, array('baz' => 'bla'));
-        $this->assertEquals(1, count($requests));
-        $this->assertEquals('http://example.com/v203/events', $requests[0]->getUrl());
+        $this->assertEqualAssociativeArrays($response, ['baz' => 'bla']);
+        $this->assertEquals(1, count($this->requests));
+        $this->assertEquals('http://example.com/v203/events', (string)$this->requests[0]['request']->getUri());
         $this->assertEqualAssociativeArrays(
             array('$api_key' => self::API_KEY, 'foo' => 'bar'),
-            json_decode((string) $requests[0]->getBody())
+            json_decode((string) $this->requests[0]['request']->getBody())
         );
     }
 
     public function testLabelUser()
     {
-        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+        $this->mockHandler->append(new Response(200, [], json_encode([
             'baz' => 'bla',
-        ))));
-        $response = $this->client->labelUser(new Label('1234', array('foo' => 'bar')));
-        $requests = $this->httpMock->getReceivedRequests();
+        ])));
+        $response = $this->client->labelUser(new Label('1234', ['foo' => 'bar']));
 
-        $this->assertEqualAssociativeArrays($response, array('baz' => 'bla'));
-        $this->assertEquals(1, count($requests));
-        $this->assertEquals('http://example.com/v203/users/1234/labels', $requests[0]->getUrl());
+        $this->assertEqualAssociativeArrays($response, ['baz' => 'bla']);
+        $this->assertEquals(1, count($this->requests));
+        $this->assertEquals('http://example.com/v203/users/1234/labels', (string)$this->requests[0]['request']->getUri());
         $this->assertEqualAssociativeArrays(
             array('$api_key' => self::API_KEY, 'foo' => 'bar'),
-            json_decode((string) $requests[0]->getBody())
+            json_decode((string) $this->requests[0]['request']->getBody())
         );
     }
 
     public function testUserScore()
     {
-        $this->httpMock->addResponse(new Response(200, null, json_encode(array(
+        $this->mockHandler->append(new Response(200, [], json_encode([
             'user_id' => '123',
             'score' => 0.93,
-            'reasons' => array(
-                array(
+            'reasons' => [
+                [
                     'name' => 'UsersPerDevice',
                     'value' => 4,
-                    'details' => array(
+                    'details' => [
                         'users' => 'a, b, c, d',
-                    ),
-                ),
-            ),
-        ))));
+                    ],
+                ],
+            ],
+        ])));
+        $score = $this->client->userScore(123);
 
-        $score = $this->client->userScore('123');
-        $requests = $this->httpMock->getReceivedRequests();
-
-        $this->assertEquals(1, count($requests));
-        $this->assertEquals(
-            'http://example.com/v203/score/123/?api_key=' . self::API_KEY,
-            $requests[0]->getUrl()
-        );
+        $this->assertEquals(1, count($this->requests));
+        $this->assertEquals('http://example.com/v203/score/123/?api_key=' . self::API_KEY, (string)$this->requests[0]['request']->getUri());
 
         $this->assertEquals('123', $score->userId);
         $this->assertEquals(0.93, $score->score);
         $this->assertEquals(
-            array(
-                array(
+            [
+                [
                     'name' => 'UsersPerDevice',
                     'value' => 4,
-                    'details' => array(
+                    'details' => [
                         'users' => 'a, b, c, d',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             $score->reasons
         );
     }
 
     public function testInvalidResponseRethrownAsBadRequestException()
     {
-        $this->httpMock->addResponse(new Response(403, null, json_encode(array(
+        $this->mockHandler->append(new Response(403, [], json_encode([
             'status' => 51,
             'error_message' => 'Invalid API key',
-        ))));
+        ])));
 
-        $this->setExpectedException('Sift\Exception\BadRequestException');
-        $this->client->send($this->http->post('foo/butts'));
+        $this->setExpectedException(BadRequestException::class);
+        $this->client->send('POST', 'foo/butts');
     }
 
     public function testServerErrorRethrownAsServerErrorException()
     {
-        $this->httpMock->addResponse(new Response(500));
-        $this->setExpectedException('Sift\Exception\ServerErrorException');
-        $this->client->send($this->http->post('foo/butts'));
+        $this->mockHandler->append(new Response(500, []));
+
+        $this->setExpectedException(ServerErrorException::class);
+        $this->client->send('POST', 'foo/butts');
     }
 
     public function testCurlExceptionRethrownAsHttpException()
     {
-        $this->httpMock->addException(new CurlException('derp'));
-        $this->setExpectedException('Sift\Exception\HttpException');
-        $this->client->send($this->http->post('foo/butts'));
+        $this->mockHandler->append(new \Exception('derp'));
+
+        $this->setExpectedException(HttpException::class);
+        $this->client->send('POST', 'foo/butts');
     }
 }
